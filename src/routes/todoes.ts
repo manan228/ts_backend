@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { Todo } from "../models/todo";
 
+type RequestBody = { text: string };
+type RequestParams = { todoId: string };
+
 let todos: Todo[] = [];
 
 const router = Router();
@@ -10,6 +13,8 @@ router.get("/", (req, res, next) => {
 });
 
 router.post("/todo", (req, res, next) => {
+  const body = req.body as RequestBody;
+
   const newTodo: Todo = {
     id: new Date().toISOString(),
     text: req.body.text,
@@ -21,7 +26,11 @@ router.post("/todo", (req, res, next) => {
 });
 
 router.put("/todo/:todoId", (req, res, next) => {
+  const parmas = req.params as RequestParams;
+
   const tid = req.params.todoId;
+
+  const body = req.body as RequestBody;
 
   const todoIndex = todos.findIndex((todoItem) => todoItem.id === tid);
 
@@ -35,7 +44,9 @@ router.put("/todo/:todoId", (req, res, next) => {
 });
 
 router.delete("/todo/:todoId", (req, res, next) => {
-  todos = todos.filter((todoItem) => todoItem.id !== req.params.todoId);
+  const params = req.params as RequestParams;
+
+  todos = todos.filter((todoItem) => todoItem.id !== params.todoId);
 
   res.status(200).json({ message: "Deleted todo", todos: todos });
 });
